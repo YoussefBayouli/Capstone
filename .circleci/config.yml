@@ -1,52 +1,51 @@
-version: 2
+version: 2.1
 
 jobs:
+  Lint:
+    docker:
+      - image: ubuntu
+    steps:
+      - checkout
+      - run:
+          name: Linting blue HTML file
+          command: |
+            cd blue
+            tidy -f errsblue.txt -m index.html
+            cat errsblue.txt
 
-Lint:
-  docker:
-    - image: ubuntu
-  steps:
-    - checkout
-    - run:
-        name: Linting blue HTML file
-        command: |
-          cd blue
-          tidy -f errsblue.txt -m index.html
-          cat errsblue.txt
+      - run:
+          name: Linting green HTML file
+          command: |
+            cd green
+            tidy -f errsgreen.txt -m index.html
+            cat errsgreen.txt
 
-    - run:
-        name: Linting green HTML file
-        command: |
-          cd green
-          tidy -f errsgreen.txt -m index.html
-          cat errsgreen.txt
+      - run:
+          name: Hadolint Dockerfile
+          command: |
+            hadolint --ignore DL3006 Dockerfile
 
-    - run:
-        name: Hadolint Dockerfile
-        command: |
-          hadolint --ignore DL3006 Dockerfile
+  Dockerize:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Build and push blue Docker image
+          command: |
+            cd blue
+            ls
+            docker build -t spacegeekops/test_blue_image
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push spacegeekops/test_blue_image
 
-Dockerize:
-  machine: true
-  steps:
-    - checkout
-    - run:
-        name: Build and push blue Docker image
-        command: |
-          cd blue
-          ls
-          docker build -t spacegeekops/test_blue_image
-          echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-          docker push spacegeekops/test_blue_image
-
-    - run:
-        name: Build and push green Docker image
-        command: |
-          cd green
-          ls
-          docker build -t spacegeekops/test_green_image
-          echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-          docker push spacegeekops/test_green_image
+      - run:
+          name: Build and push green Docker image
+          command: |
+            cd green
+            ls
+            docker build -t spacegeekops/test_green_image
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push spacegeekops/test_green_image
 
 workflows:
   default:
