@@ -65,10 +65,8 @@ jobs:
           name: Build and push green Docker image
           command: |
             cd green
-            ls
-            ./run_docker.sh
-            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            ./upload_docker.sh
+            docker build -t spacegeekops/test_blue_image .
+            docker push spacegeekops/test_blue_image
 #
 workflows:
   default:
