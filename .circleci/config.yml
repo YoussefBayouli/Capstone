@@ -32,13 +32,13 @@ jobs:
       - run:
           name: Hadolint Dockerfile
           command: |
-          cd blue  
-          hadolint --ignore DL3006 Dockerfile
+            cd blue  
+            hadolint --ignore DL3006 Dockerfile
       - run:
           name: Hadolint Dockerfile
           command: |
-          cd green 
-          hadolint --ignore DL3006 Dockerfile
+            cd green 
+            hadolint --ignore DL3006 Dockerfile
 
   Dockerize:
     machine: true
