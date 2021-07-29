@@ -48,8 +48,7 @@ jobs:
           name: Build and push blue Docker image
           command: |
             cd blue
-            ls
-            docker build -t spacegeekops/test_blue_image
+            docker build --tag=test_blue_image:latest 
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push spacegeekops/test_blue_image
 
