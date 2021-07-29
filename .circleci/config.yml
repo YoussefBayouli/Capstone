@@ -58,10 +58,9 @@ jobs:
           command: |
             cd green
             ls
-            docker build -t spacegeekops/test_green_image
+            ./run_docker.sh
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            docker push spacegeekops/test_green_image
-#
+            ./upload_docker.sh
 workflows:
   default:
     jobs:
