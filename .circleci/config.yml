@@ -97,7 +97,8 @@ jobs:
           name: update kubeconfig
           command: |
             aws sts get-caller-identity
-            aws eks --region us-west-2 update-kubeconfig --name capstone
+            aws eks update-kubeconfig --name capstone --region us-west-2 --role-arn arn:aws:iam::435759566340:role/Capstone
+            kubectl config view --minify
             kubectl get svc
 
       - run:
