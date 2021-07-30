@@ -67,10 +67,35 @@ jobs:
             cd green
             docker build -t spacegeekops/test_blue_image .
             docker push spacegeekops/test_blue_image
-#
+
+  Kubectl config:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - kubernetes/install-kubectl
+      - run: 
+            name: aws-iam-authenticator
+            command: |
+              curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator 
+              openssl sha1 -sha256 aws-iam-authenticator
+              chmod +x ./aws-iam-authenticator
+              mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
+              echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+              aws-iam-authenticator help
+#Download the Amazon EKS vended aws-iam-authenticator binary from Amazon S3.
+#Check the SHA-256 sum for your downloaded binary.
+#Apply execute permissions to the binary.
+#Copy the binary to a folder in your $PATH. We recommend creating a $HOME/bin/aws-iam-authenticator and ensuring that $HOME/bin comes first in your $PATH.
+#Add $HOME/bin to your PATH environment variable.
+#Test that the aws-iam-authenticator binary works.
+
+
 workflows:
   default:
     jobs:
       - Lint
       - Dockerize:
           requires: [Lint]
+      -Kubectl config:
+          requires: [Dockerize]
