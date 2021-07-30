@@ -98,7 +98,23 @@ jobs:
           command: |
             aws sts get-caller-identity
             aws eks --region us-west-2 update-kubeconfig --name capstone
-#
+            kubectl get svc
+
+      - run:
+          name: Start Blue Service
+          command: |
+            aws sts get-caller-identity
+            kubectl apply -f ./Blue-controller.json
+
+      - run:
+          name: Start Green Service
+          command: |
+            kubectl apply -f ./Green-controller.json
+
+      - run:
+          name: Redirect to Blue
+          command: |
+            kubectl apply -f ./BlueService.json
 workflows:
   default:
     jobs:
