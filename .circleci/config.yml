@@ -98,7 +98,7 @@ jobs:
           command: |
             aws sts get-caller-identity
             aws eks --region us-west-2 update-kubeconfig --name capstone
-
+#
 workflows:
   default:
     jobs:
