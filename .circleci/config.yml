@@ -86,12 +86,19 @@ jobs:
             mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
             echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
             aws-iam-authenticator help
-#Download the Amazon EKS vended aws-iam-authenticator binary from Amazon S3.
-#Check the SHA-256 sum for your downloaded binary.
-#Apply execute permissions to the binary.
-#Copy the binary to a folder in your $PATH. We recommend creating a $HOME/bin/aws-iam-authenticator and ensuring that $HOME/bin comes first in your $PATH.
-#Add $HOME/bin to your PATH environment variable.
-#Test that the aws-iam-authenticator binary works.
+      #Download the Amazon EKS vended aws-iam-authenticator binary from Amazon S3.
+      #Check the SHA-256 sum for your downloaded binary.
+      #Apply execute permissions to the binary.
+      #Copy the binary to a folder in your $PATH. We recommend creating a $HOME/bin/aws-iam-authenticator and ensuring that $HOME/bin comes first in your $PATH.
+      #Add $HOME/bin to your PATH environment variable.
+      #Test that the aws-iam-authenticator binary works.
+
+      - run:
+          name: update kubeconfig
+          command: |
+            aws sts get-caller-identity
+            aws eks --region us-west-2 update-kubeconfig --name Capstone project
+            kubectl get svc
 
 workflows:
   default:
