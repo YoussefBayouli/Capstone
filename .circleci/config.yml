@@ -83,8 +83,9 @@ jobs:
           name: Ensure backend infrastructure exist
           command: |
             cd Cloudformation
+            ls Cloudformation
             chmod +x create-stack.sh 
-            ./create-stack.sh new stack EKS.yml EKS-par.json
+            ./create-stack.sh newstack EKS.yml EKS-par.json
 
   Kubectl config:
     docker:
