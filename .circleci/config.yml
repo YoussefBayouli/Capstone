@@ -81,7 +81,7 @@ jobs:
           name: Ensure backend infrastructure exist
           command: |
             aws cloudformation create-stack --stack-name Capstone \
-              --template-body .circleci/Cloudformation/EKS.yml \
+              --template-body file://EKS.yml \
               --parameters file://EKS-par.json \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
               --region=us-west-2
