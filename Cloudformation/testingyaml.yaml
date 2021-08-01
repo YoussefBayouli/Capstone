@@ -106,3 +106,19 @@ EKSNODEGROUP:
     Subnets:
       - Fn::ImportValue: PublicSubnet1CIDR
       - Fn::ImportValue: PublicSubnet2CIDR
+
+
+
+    deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Ensure backend infrastructure exist
+          command: |
+            aws cloudformation create-stack --stack-name Capstone-${CIRCLE_WORKFLOW_ID:0:7} \
+              --template-body file://EKS.yml \
+              --parameters file://EKS-par.json \
+              --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
+              --region=us-west-2
