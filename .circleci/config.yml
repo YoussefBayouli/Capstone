@@ -77,14 +77,14 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: yum -y install tar gzip
-      - run: yum -y install which
       - run:
           name: Ensure backend infrastructure exist
           command: |
-            aws cloudformation create-stack \
-              --stack-name Capstone \
-              --template-body file:///home/circleci/Cloudformation/EKS.yml/EKS-par.json \
+            aws cloudformation create-stack --stack-name Capstone \
+              --template-body .circleci/Cloudformation/EKS.yml \
+              --parameters .circleci/Cloudformation/EKS-par.json \
+              --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
+              --region=us-west-2
 
   Kubectl config:
     docker:
