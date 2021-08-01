@@ -82,7 +82,7 @@ jobs:
           command: |
             aws cloudformation create-stack --stack-name Capstone \
               --template-body .circleci/Cloudformation/EKS.yml \
-              --parameters .circleci/Cloudformation/EKS-par.json \
+              --parameters file://EKS-par.json \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
               --region=us-west-2
 
