@@ -138,5 +138,7 @@ workflows:
       - Lint
       - Dockerize:
           requires: [Lint]
+      -deploy-infrastructure:
+          requires: [Dockerize]
       - Kubectl config:
           requires: [Dockerize]
