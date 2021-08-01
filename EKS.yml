@@ -1,19 +1,9 @@
 Description: >
-  Youssef Bayouli / Udagram Project
+  Youssef Bayouli / Capstone
 Parameters:
   EnvironmentName:
     Description: An environment name that will be prefixed to resources
     Type: String
-
-  EKSROLE:
-    Description: Role Assigned to the EKS Cluster
-    Type: String
-    Default: arn:aws:iam::041315253906:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS
-
-  EKSNODEGROUPROLE:
-    Description: Role Assigned to the EKS NodeGroup
-    Type: String
-    Default: arn:aws:iam::041315253906:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup
 
   VpcCIDR:
     Description: Please enter the IP range (CIDR notation) for this
@@ -29,6 +19,16 @@ Parameters:
     Description: Please enter the IP range (CIDR notation) for the Subnet
     Type: String
     Default: 10.0.1.0/24
+
+  EKSROLE:
+    Description: Role Assigned to the EKS Cluster
+    Type: String
+    Default: arn:aws:iam::041315253906:role/Capstoneproject
+
+  EKSNODEGROUPROLE:
+    Description: Role Assigned to the EKS NodeGroup
+    Type: String
+    Default: arn:aws:iam::041315253906:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup
 
 Resources:
   VPC:
@@ -68,7 +68,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [0, !GetAZs ""]
+      AvailabilityZone: !Select [1, !GetAZs ""]
       CidrBlock: !Ref PublicSubnet2CIDR
       MapPublicIpOnLaunch: true
       Tags:
@@ -84,8 +84,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Name
           Value: !Sub ${EnvironmentName}-WEBSERVERGROUP
-      VpcId:
-        Fn::ImportValue: VpcCIDR
+      VpcId: !Ref VPC
 
   EKSSECURITYGROUPINGRESS:
     Type: AWS::EC2::SecurityGroupIngress
@@ -100,14 +99,14 @@ Resources:
     Type: "AWS::EKS::Cluster"
     Properties:
       Name: EKSCLUSTER
-      Version: "1.15"
+      Version: "1.21"
       RoleArn: !Ref EKSROLE
       ResourcesVpcConfig:
         SecurityGroupIds:
           - !Ref EKSSECURITYGROUP
         SubnetIds:
-          - Fn::ImportValue: PublicSubnet1CIDR
-          - Fn::ImportValue: PublicSubnet2CIDR
+          - subnet-0ba052a28fe5434f3
+          - subnet-0d85d6321b8392355
 
   EKSNODEGROUP:
     Type: "AWS::EKS::Nodegroup"
@@ -119,9 +118,89 @@ Resources:
         DesiredSize: 1
         MaxSize: 3
       Subnets:
-        - Fn::ImportValue: PublicSubnet1CIDR
-        - Fn::ImportValue: PublicSubnet2CIDR
+        - subnet-0ba052a28fe5434f3
+        - subnet-0d85d6321b8392355
+  WebAppLB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      SecurityGroups:
+        - Ref: LoadBalancerSecGroup
+      Subnets:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
 
+  WebAppTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 8
+      HealthyThresholdCount: 2
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+      VpcId: !Ref VPC
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn:
+            Ref: WebAppTargetGroup
+      LoadBalancerArn:
+        Ref: WebAppLB
+      Port: 80
+      Protocol: HTTP
+
+  ALBListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref "WebAppTargetGroup"
+      Conditions:
+        - Field: path-pattern
+          Values: [/]
+      ListenerArn: !Ref "Listener"
+      Priority: 1
+
+  LoadBalancerSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http traffic to and from load balancer
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  WebServerSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http and ssh to our load balancer
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
 Outputs:
   VPC:
     Description: A reference to the created VPC
@@ -134,3 +213,9 @@ Outputs:
     Value: !Join [",", [!Ref PublicSubnet1, !Ref PublicSubnet2]]
     Export:
       Name: !Sub ${EnvironmentName}-PUB-NETS
+
+  WebAppLoadBalancerDNSName:
+    Description: DNS name or Public URL of the Load Balancer
+    Value: !Join ["", ["http://", !GetAtt WebAppLB.DNSName]]
+    Export:
+      Name: !Sub ${EnvironmentName}-LB-DNSName
