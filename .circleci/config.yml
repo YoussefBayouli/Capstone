@@ -72,6 +72,22 @@ jobs:
             docker build -t spacegeekops/test_blue_image .
             docker push spacegeekops/test_blue_image
 
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run: yum -y install tar gzip
+      - run: yum -y install which
+      - run:
+          name: Ensure backend infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/Cloudformation/EKS.yml \
+              --stack-name "blueversion-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter .circleci/Cloudformation/EKS-par.json ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --tags project=Capstone_project
+
   Kubectl config:
     docker:
       - image: amazon/aws-cli

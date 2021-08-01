@@ -1,0 +1,136 @@
+Description: >
+  Youssef Bayouli / Udagram Project
+Parameters:
+  EnvironmentName:
+    Description: An environment name that will be prefixed to resources
+    Type: String
+
+  EKSROLE:
+    Description: Role Assigned to the EKS Cluster
+    Type: String
+    Default: arn:aws:iam::041315253906:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS
+
+  EKSNODEGROUPROLE:
+    Description: Role Assigned to the EKS NodeGroup
+    Type: String
+    Default: arn:aws:iam::041315253906:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup
+
+  VpcCIDR:
+    Description: Please enter the IP range (CIDR notation) for this
+    Type: String
+    Default: 10.0.0.0/16
+
+  PublicSubnet1CIDR:
+    Description: Please enter the IP range (CIDR notation) for the Subnet
+    Type: String
+    Default: 10.0.0.0/24
+
+  PublicSubnet2CIDR:
+    Description: Please enter the IP range (CIDR notation) for the Subnet
+    Type: String
+    Default: 10.0.1.0/24
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      CidrBlock: !Ref PublicSubnet1CIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      CidrBlock: !Ref PublicSubnet2CIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
+
+  EKSSECURITYGROUP:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: EKS Cluster Security Group
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-WEBSERVERGROUP
+      VpcId:
+        Fn::ImportValue: VpcCIDR
+
+  EKSSECURITYGROUPINGRESS:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref EKSSECURITYGROUP
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !Ref EKSSECURITYGROUP
+
+  EKSCLUSTER:
+    Type: "AWS::EKS::Cluster"
+    Properties:
+      Name: EKSCLUSTER
+      Version: "1.15"
+      RoleArn: !Ref EKSROLE
+      ResourcesVpcConfig:
+        SecurityGroupIds:
+          - !Ref EKSSECURITYGROUP
+        SubnetIds:
+          - Fn::ImportValue: PublicSubnet1CIDR
+          - Fn::ImportValue: PublicSubnet2CIDR
+
+  EKSNODEGROUP:
+    Type: "AWS::EKS::Nodegroup"
+    Properties:
+      ClusterName: !Ref EKSCLUSTER
+      NodeRole: !Ref EKSNODEGROUPROLE
+      ScalingConfig:
+        MinSize: 1
+        DesiredSize: 1
+        MaxSize: 3
+      Subnets:
+        - Fn::ImportValue: PublicSubnet1CIDR
+        - Fn::ImportValue: PublicSubnet2CIDR
+
+Outputs:
+  VPC:
+    Description: A reference to the created VPC
+    Value: !Ref VPC
+    Export:
+      Name: !Sub ${EnvironmentName}-VPCID
+
+  PublicSubnets:
+    Description: A list of the public subnets
+    Value: !Join [",", [!Ref PublicSubnet1, !Ref PublicSubnet2]]
+    Export:
+      Name: !Sub ${EnvironmentName}-PUB-NETS
