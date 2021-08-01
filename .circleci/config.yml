@@ -82,6 +82,7 @@ jobs:
       - run:
           name: Ensure backend infrastructure exist
           command: |
+            ls
             cd .circleci/Cloudformation
             ls Cloudformation
             chmod +x create-stack.sh 
