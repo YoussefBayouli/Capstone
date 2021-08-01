@@ -82,11 +82,9 @@ jobs:
       - run:
           name: Ensure backend infrastructure exist
           command: |
-            aws cloudformation deploy \
-              --template-file .circleci/Cloudformation/EKS.yml \
-              --stack-name "blue-version-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-              --tags project=capstone
+            aws cloudformation create-stack \
+              --stack-name Capstone \
+              --template-body file:///home/circleci/Cloudformation/EKS.yml/EKS-par.json \
 
   Kubectl config:
     docker:
