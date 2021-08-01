@@ -80,7 +80,7 @@ jobs:
       - run:
           name: Ensure backend infrastructure exist
           command: |
-            aws cloudformation create-stack --stack-name Capstone \
+            aws cloudformation create-stack --stack-name Capstone-${CIRCLE_WORKFLOW_ID:0:7} \
               --template-body file://EKS.yml \
               --parameters file://EKS-par.json \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
