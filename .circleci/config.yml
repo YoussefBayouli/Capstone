@@ -82,7 +82,7 @@ jobs:
       - run:
           name: Ensure backend infrastructure exist
           command: |
-            cd Cloudformation
+            cd .circleci/Cloudformation
             ls Cloudformation
             chmod +x create-stack.sh 
             ./create-stack.sh newstack EKS.yml EKS-par.json
