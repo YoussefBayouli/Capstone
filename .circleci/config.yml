@@ -98,19 +98,18 @@ jobs:
           name: update kubeconfig
           command: |
             aws sts get-caller-identity
-            cat ~/.aws/credentials
             aws eks update-kubeconfig  --name newcapstone --region us-west-2
 
       - run:
           name: Start Blue Service
           command: |
             aws sts get-caller-identity
-            kubectl apply -f ./Blue-controller.json
+            kubectl apply -f ./blue-controller.json
 
       - run:
           name: Start Green Service
           command: |
-            kubectl apply -f ./Green-controller.json
+            kubectl apply -f ./green-controller.json
 
       - run:
           name: Redirect to Blue
