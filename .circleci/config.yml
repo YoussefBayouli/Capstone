@@ -100,7 +100,6 @@ jobs:
             aws sts get-caller-identity
             aws eks update-kubeconfig  --name newcapstone --region us-west-2
 
-      ###
       - run:
           name: Start Blue Service
           command: |
