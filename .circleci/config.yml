@@ -101,7 +101,7 @@ jobs:
             aws eks update-kubeconfig --name capstone --region us-west-2 --role-arn arn:aws:iam::041315253906:role/Capstoneproject
             kubectl config view --minify
             kubectl get svc
-
+      #
       - run:
           name: Start Blue Service
           command: |
