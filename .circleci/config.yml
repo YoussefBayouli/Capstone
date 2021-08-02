@@ -98,9 +98,8 @@ jobs:
           name: update kubeconfig
           command: |
             aws sts get-caller-identity
-            aws eks update-kubeconfig --name newcapstone --region us-west-2 --role-arn arn:aws:iam::041315253906:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS
-            kubectl config view --minify
-            kubectl get svc
+            aws eks update-kubeconfig  --name CapstoneCluster --region us-west-2
+
       ###
       - run:
           name: Start Blue Service
