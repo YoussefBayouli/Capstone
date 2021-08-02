@@ -99,7 +99,7 @@ jobs:
           command: |
             aws sts get-caller-identity
             aws eks update-kubeconfig  --name youssef --region us-west-2
-
+      #
       - run:
           name: Start Blue Service
           command: |
