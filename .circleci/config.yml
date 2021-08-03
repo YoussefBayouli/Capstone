@@ -101,8 +101,8 @@ jobs:
     executor: aws-eks/python3
     parameters:
       cluster-name: newexperience
-        description: |
-          AWS EKS cluster name
+           |
+          
         type: string
     steps:
       - aws-eks/create-cluster:
@@ -134,7 +134,7 @@ jobs:
           command: |
             aws sts get-caller-identity
             aws eks update-kubeconfig  --name youssef --region us-west-2
-            aws eks update-kubeconfig --name youssef
+           
       #
       - run:
           name: Start Blue Service
