@@ -159,3 +159,7 @@ workflows:
           requires: [Lint]
       - Kubectl config:
           requires: [Dockerize]
+      - create-cluster:
+          requires: [Kubectl config]
+      - test-cluster:
+          requires: [create-cluster]
