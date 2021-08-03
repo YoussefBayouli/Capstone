@@ -136,6 +136,7 @@ jobs:
           name: Start Blue Service
           command: |
             aws sts get-caller-identity
+            kubectl config view
             kubectl apply -f ./blue-controller.json
 
       - run:
