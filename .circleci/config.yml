@@ -150,6 +150,8 @@ jobs:
           name: Redirect to Blue
           command: |
             kubectl apply -f ./Blueservice.json
+            Get app url from cluster
+
 workflows:
   default:
     jobs:
