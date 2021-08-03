@@ -97,6 +97,38 @@ jobs:
       #Add $HOME/bin to your PATH environment variable.
       #Test that the aws-iam-authenticator binary works.
       ####
+  create-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          AWS EKS cluster name
+        type: string
+    steps:
+      - aws-eks/create-cluster:
+          cluster-name: newexperience
+          node-type: "t2.micro"
+          nodes: 2
+          show-eksctl-command: true
+          zones: "us-west2,us-west-2"
+  test-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          AWS EKS cluster name
+        type: string
+    steps:
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: newexperience
+      - run:
+          name: Test AWS EKS cluster
+          command: |
+            kubectl get services
+            kubectl get pods -l app=newexperience
+            kubectl get deployments
+
       - run:
           name: update kubeconfig
           command: |
