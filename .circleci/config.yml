@@ -126,7 +126,7 @@ jobs:
       #  aws eks update-kubeconfig  --name hoexperience --region us-west-2
 
       #
-  create-cluster:
+  deployement:
     docker:
       - image: amazon/aws-cli
     steps:
@@ -161,7 +161,7 @@ workflows:
           requires: [Lint]
       - Kubectl config:
           requires: [Dockerize]
-      - create-cluster:
+      - deployement:
           requires: [Kubectl config]
       #- test-cluster:
       #   requires: [create-cluster]
