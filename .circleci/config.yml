@@ -144,7 +144,6 @@ jobs:
       - run:
           name: Start Green Service
           command: |
-            cd green
             kubectl apply -f ./green-controller.json
 
       - run:
