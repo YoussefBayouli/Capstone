@@ -149,7 +149,7 @@ jobs:
       - run:
           name: Redirect to Blue
           command: |
-            kubectl apply -f ./BlueService.json
+            kubectl apply -f ./Blueservice.json
 workflows:
   default:
     jobs:
