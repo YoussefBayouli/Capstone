@@ -128,11 +128,10 @@ jobs:
       #
   create-cluster:
     docker:
-    - image: amazon/aws-cli
+      - image: amazon/aws-cli
     steps:
       - checkout
       - kubernetes/install-kubectl
-    steps:
       - run:
           name: Start Blue Service
           command: |
