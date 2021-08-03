@@ -155,5 +155,5 @@ workflows:
           requires: [Dockerize]
       - create-cluster:
           requires: [Kubectl config]
-      - test-cluster:
-          requires: [create-cluster]
+      #- test-cluster:
+      #   requires: [create-cluster]
