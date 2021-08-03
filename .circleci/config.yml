@@ -119,11 +119,11 @@ jobs:
       #  kubectl get pods -l app=hoexperience
       # kubectl get deployments
 
-      #- run:
-      #   name: update kubeconfig
-      #  command: |
-      #   aws sts get-caller-identity
-      #  aws eks update-kubeconfig  --name hoexperience --region us-west-2
+      - run:
+          name: update kubeconfig
+        command: |
+          aws sts get-caller-identity
+          aws eks update-kubeconfig  --name hoexperience --region us-west-2
 
       #
   create-cluster:
@@ -137,6 +137,7 @@ jobs:
           command: |
             aws sts get-caller-identity
             kubectl config view
+            export KUBECONFIG=$KUBECONFIG:$HOME/.kube/config
             kubectl apply -f ./blue-controller.json
 
       - run:
