@@ -126,6 +126,9 @@ jobs:
       #  aws eks update-kubeconfig  --name hoexperience --region us-west-2
 
       #
+      create-cluster:
+        executor: aws-eks/python3
+      steps:
       - run:
           name: Start Blue Service
           command: |
