@@ -101,7 +101,7 @@ jobs:
     executor: aws-eks/python3
     steps:
       - aws-eks/create-cluster:
-          cluster-name: newexperience
+          cluster-name: experience
           node-type: "t2.micro"
           nodes: 2
           show-eksctl-command: true
@@ -111,7 +111,7 @@ jobs:
     steps:
       - kubernetes/install
       - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: newexperience
+          cluster-name: experience
       - run:
           name: Test AWS EKS cluster
           command: |
