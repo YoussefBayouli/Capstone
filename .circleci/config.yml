@@ -108,11 +108,6 @@ jobs:
           zones: "us-west2,us-west-2"
   test-cluster:
     executor: aws-eks/python3
-    parameters:
-      cluster-name:
-        description: |
-          AWS EKS cluster name
-        type: string
     steps:
       - kubernetes/install
       - aws-eks/update-kubeconfig-with-authenticator:
