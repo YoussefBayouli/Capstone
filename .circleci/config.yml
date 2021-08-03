@@ -95,7 +95,7 @@ jobs:
       #Copy the binary to a folder in your $PATH. We recommend creating a $HOME/bin/aws-iam-authenticator and ensuring that $HOME/bin comes first in your $PATH.
       #Add $HOME/bin to your PATH environment variable.
       #Test that the aws-iam-authenticator binary works.
-      ####
+      #####
   #
   create-cluster:
     executor: aws-eks/python3
