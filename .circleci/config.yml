@@ -99,11 +99,6 @@ jobs:
   #
   create-cluster:
     executor: aws-eks/python3
-    parameters:
-      cluster-name: newexperience
-        |
-
-    type: string
     steps:
       - aws-eks/create-cluster:
           cluster-name: newexperience
