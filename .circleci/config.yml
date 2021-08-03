@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   kubernetes: circleci/kubernetes@0.11.2
   aws-eks: circleci/aws-eks@1.0.3
+  aws-cli: circleci/aws-cli@2.0.3
   k8s: dialogue/k8s@4.4.9
 #
 jobs:
