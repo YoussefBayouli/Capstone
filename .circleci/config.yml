@@ -127,7 +127,11 @@ jobs:
 
       #
   create-cluster:
-    executor: aws-eks/python3
+    docker:
+    - image: amazon/aws-cli
+    steps:
+      - checkout
+      - kubernetes/install-kubectl
     steps:
       - run:
           name: Start Blue Service
