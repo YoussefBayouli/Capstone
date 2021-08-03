@@ -105,7 +105,7 @@ jobs:
           node-type: "t2.micro"
           nodes: 2
           show-eksctl-command: true
-          zones: "us-west2,us-west-2"
+          zones: "us-west-2a,us-west-2b"
   test-cluster:
     executor: aws-eks/python3
     steps:
