@@ -151,6 +151,7 @@ jobs:
           command: |
             kubectl apply -f ./Blueservice.json
             kubectl get services
+            minikube service bluegreenlb --url
 
 workflows:
   default:
