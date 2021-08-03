@@ -101,6 +101,7 @@ jobs:
           name: update kubeconfig
           command: |
             aws sts get-caller-identity
+            kubectl edit -n kube-system configmap/aws-auth
             aws eks update-kubeconfig  --name youssef --region us-west-2
       #
       - run:
