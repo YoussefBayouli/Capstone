@@ -121,9 +121,9 @@ jobs:
 
       - run:
           name: update kubeconfig
-        command: |
-          aws sts get-caller-identity
-          aws eks update-kubeconfig  --name hoexperience --region us-west-2
+          command: |
+            aws sts get-caller-identity
+            aws eks update-kubeconfig  --name hoexperience --region us-west-2
 
       #
   create-cluster:
