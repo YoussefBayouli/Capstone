@@ -100,7 +100,7 @@ jobs:
   create-cluster:
     executor: aws-eks/python3
     parameters:
-      cluster-name:
+      cluster-name: newexperience
         description: |
           AWS EKS cluster name
         type: string
