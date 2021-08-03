@@ -101,7 +101,7 @@ jobs:
     executor: aws-eks/python3
     steps:
       - aws-eks/create-cluster:
-          cluster-name: experience
+          cluster-name: hoexperience
           node-type: "t2.micro"
           nodes: 2
           show-eksctl-command: true
@@ -111,30 +111,32 @@ jobs:
     steps:
       - kubernetes/install
       - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: experience
+          cluster-name: hoexperience
       - run:
           name: Test AWS EKS cluster
           command: |
             kubectl get services
-            kubectl get pods -l app=newexperience
+            kubectl get pods -l app=hoexperience
             kubectl get deployments
 
       - run:
           name: update kubeconfig
           command: |
             aws sts get-caller-identity
-            aws eks update-kubeconfig  --name youssef --region us-west-2
+            aws eks update-kubeconfig  --name hoexperience --region us-west-2
 
       #
       - run:
           name: Start Blue Service
           command: |
             aws sts get-caller-identity
+            cd blue
             kubectl apply -f ./blue-controller.json
 
       - run:
           name: Start Green Service
           command: |
+            cd green
             kubectl apply -f ./green-controller.json
 
       - run:
