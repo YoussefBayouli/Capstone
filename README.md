@@ -21,7 +21,7 @@ AWS Cli
 Eksctl
 Kubectl
 
-# Instructions
+# Instructions(local)
 #### 1.Build the blue image from the blue folder. Adjust the name of the image to your own.
 ```./run_docker.sh```
 
